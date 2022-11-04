@@ -22,6 +22,8 @@ app.config['SECRET_KEY'] = os.urandom(24)
 
 dbuser=str(os.environ.get('dbuser'))
 dbpass=str(os.environ.get('dbpass'))
+dbuser='somedbuser'
+dbpass='somedbpass'
 print (dbuser)
 
 #AWS RDS
@@ -67,7 +69,7 @@ def firestore():
     doc_ref = firestore_client.collection(u'users').document(u'namelist1')
     doc_ref.set({
         u'first': u'Jack',
-        u'last': u'Wang',   
+        u'last': u'Wang',
         u'born': 1982
     })
     doc_ref = firestore_client.collection(u'users').document(u'namelist2')
@@ -87,43 +89,44 @@ def firestore():
         i=i+1
 
     return render_template('show_all.html',peoples = peoples)
-  
+
 
 @app.route("/gsp",methods=['GET','POST'])
 # @tracer.wrap("gsp",service="Google Spanner")
 def gsp():
     #GCP Cloud Spanner
     # Instantiate a client.
-    config.grpc["service"]="Google Spanner"
-    spanner_client = spanner.Client(project='datadog-sandbox')
+    # config.grpc["service"]="Google Spanner"
+    # spanner_client = spanner.Client(project='datadog-sandbox')
 
     # Your Cloud Spanner instance ID.
-    instance_id = 'jacktest'
+    # instance_id = 'jacktest'
 
     # Get a Cloud Spanner instance by ID.
-    instance = spanner_client.instance(instance_id)
+    # instance = spanner_client.instance(instance_id)
 
     # Your Cloud Spanner database ID.
-    database_id = 'testdb'
+    # database_id = 'testdb'
 
     # Get a Cloud Spanner database by ID.
-    database = instance.database(database_id)
+    # database = instance.database(database_id)
 
     # Execute a simple SQL statement.
     #pan = tracer.trace('spanner.sql')
-    with database.snapshot() as snapshot:
-        sql="SELECT * from testtb"
-        span = tracer.current_span()
-        span.set_tag("sql",sql)
-        # span.finish()
-        results = snapshot.execute_sql(sql)
-        peoples=[]
-        for result in results:
-            peoples.append(people(result[0],result[1]))
-        # for people in results:
-        #     peoples.list.addpend(people.name)
-        #span.finish()
-        return render_template('show_all.html',peoples = peoples)
+    peoples = ['foo', 'bar']
+    # with database.snapshot() as snapshot:
+        # sql="SELECT * from testtb"
+        # span = tracer.current_span()
+        # span.set_tag("sql",sql)
+        # # span.finish()
+        # results = snapshot.execute_sql(sql)
+        # peoples=[]
+        # for result in results:
+            # peoples.append(people(result[0],result[1]))
+        # # for people in results:
+        # #     peoples.list.addpend(people.name)
+        # #span.finish()
+    return render_template('show_all.html',peoples = peoples)
 
 
 
@@ -131,9 +134,11 @@ def gsp():
 def show_all():
     #Increment a Datadog counter.
     #statsd.increment('my_webapp.page.views')
-    db=SQLAlchemy(app)
-    return render_template('show_all.html', peoples = test.query.all())
-    
+    # db=SQLAlchemy(app)
+    peoples = ['foo', 'bar']
+    # return render_template('show_all.html', peoples = test.query.all())
+    return render_template('show_all.html', peoples = peoples)
+
 @app.route('/test')
 def testpage():
     headers=request.headers
@@ -161,8 +166,8 @@ def new():
           #people = test(request.form['name'], request.form['city'],request.form['addr'], request.form['pin'])
           people=test(request.form['name'])
           print(people)
-          db.session.add(people)
-          db.session.commit()
+          # db.session.add(people)
+          # db.session.commit()
           flash('Record was successfully added')
           return redirect(url_for('show_all'))
     return render_template('new.html')
